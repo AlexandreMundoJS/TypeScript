@@ -3,8 +3,8 @@ import mysql from 'mysql';
 export const connection = mysql.createConnection({
     host: 'localhost',
     port: 3306,
-    user: 'root',
-    password: 'root',
+    user: 'user',
+    password: 'password',
     database: 'agendapetshop'
 }
 )

@@ -1,9 +1,10 @@
 import mysql from 'mysql';
 
- export const connection = mysql.createConnection({
-     host: 'localhost',
-     port: 3307,
-     user: 'root',
-     password: 'root',
-     database: 'agenda-petshop'
- })
+export const connection = mysql.createConnection({
+    host: 'localhost',
+    port: 3306,
+    user: 'root',
+    password: 'root',
+    database: 'agendapetshop'
+}
+)

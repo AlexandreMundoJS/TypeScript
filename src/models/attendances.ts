@@ -1,9 +1,8 @@
 import moment from 'moment';
 import {connection} from '../infra/connection';
 import {Request, Response, NextFunction} from 'express';
-
-
 export default new class Attendances {
+
     add(attendance: any, res: Response){
         const dataCriacao = moment().format("YYYY-MM-DD HH:MM:SS");
         console.log(dataCriacao);
@@ -50,6 +49,31 @@ export default new class Attendances {
                 res.status(400).json(err);
             } else {
                 res.status(200).json(results)
+            }
+        })
+    }
+
+    change(id: string, values: any, res: Response){
+        if (values.data){
+            values.data = moment(values.data, 'DD/MM/YYYY').format('YYYY-MM-DD HH:MM:SS');
+        }
+        const sql: string = `UPDATE Atendimentos SET ? WHERE id=?`;
+        connection.query(sql, [values, id], (err: any, results: any)=>{
+            if (err){
+                res.status(400).json(err);
+            } else {
+                res.status(200).json({...values, id});
+            }
+        })
+    }
+
+    delete(id: string, res: Response){
+        const sql: string = `DELETE FROM Atendimentos WHERE id=?`;
+        connection.query(sql, id, (err: any, results: any) => {
+            if (err){
+                res.status(400).json(err);
+            } else {
+                res.status(200).json({id});
             }
         })
     }

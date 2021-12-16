@@ -3,11 +3,13 @@ import express, {Request, Response, NextFunction} from "express";
 const routes = express.Router();
 
 routes.post("/addAttendance", (req: Request, res: Response) => {
-//   console.log(req)
   Attendances.add(req.body, res);
 });
 routes.get("/getAttendances", (req: Request, res: Response) => {
   Attendances.list(res);
 });
+routes.put("/changeAttendance/:id", (req: Request, res: Response)=>{
+  Attendances.change(req.params.id, req.body, res);
+})
 
 export default routes;

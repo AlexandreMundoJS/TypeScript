@@ -11,5 +11,8 @@ routes.get("/getAttendances", (req: Request, res: Response) => {
 routes.put("/changeAttendance/:id", (req: Request, res: Response)=>{
   Attendances.change(req.params.id, req.body, res);
 })
+routes.delete("/deleteAttendance/:id", (req: Request, res: Response)=>{
+  Attendances.delete(req.params.id, res);
+})
 
 export default routes;

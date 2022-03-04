@@ -77,4 +77,15 @@ export default new class Attendances {
             }
         })
     }
+
+    getAttendancesCount(res: Response){
+        const sql: string = `SELECT FROM Atendimentos WHERE id=?`;
+        connection.query(sql, (err: any, results: any) => {
+            if (err){
+                res.status(400).json(err);
+            } else {
+                res.status(200).json({results});
+            }
+        })
+    }
 }

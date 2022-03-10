@@ -4,7 +4,9 @@
   "description": "A Basic TS Study",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "build": "gulp scripts && gulp assets",
+    "dev": "nodemon src/main.ts"
   },
   "repository": {
     "type": "git",
@@ -21,5 +23,14 @@
   "bugs": {
     "url": "https://github.com/AlexandreMundoJS/TypeScript/issues"
   },
-  "homepage": "https://github.com/AlexandreMundoJS/TypeScript#readme"
+  "homepage": "https://github.com/AlexandreMundoJS/TypeScript#readme",
+  "devDependencies": {
+    "@types/node": "^17.0.21",
+    "gulp-nodemon": "^2.5.0",
+    "gulp-typescript": "^6.0.0-alpha.1",
+    "typescript": "^4.6.2"
+  },
+  "dependencies": {
+    "express": "^4.17.3"
+  }
 }

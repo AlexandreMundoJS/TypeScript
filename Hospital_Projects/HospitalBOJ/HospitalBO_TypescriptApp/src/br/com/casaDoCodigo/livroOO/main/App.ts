@@ -29,6 +29,6 @@ export default class App {
   }
 
   private routes(): void{
-    this.express.use('/v1/adminHospital', PatientRouter)
+    this.express.use('/v1/adminHospital/patients/', PatientRouter);
   }
 }

@@ -1,15 +1,12 @@
 import { Request, Response, Router } from "express";
-import { PatientBusiness } from "../../business/PatientBusiness";
 import { Patient } from "../../entities/Patient";
 import { Plan } from "../../entities/Plan";
 import { AddressConversor } from "../../utils/AddressConversor";
-import { DataShow } from "../../utils/DataShow";
 import { DateConversor } from "../../utils/DateConversor";
 import { JsonDB, Config } from "node-json-db";
 import fs from "fs";
 export class PatientRouter {
   public router: Router;
-  public patientBusiness: PatientBusiness = new PatientBusiness();
   private db: any;
 
   public constructor() {
@@ -30,20 +27,21 @@ export class PatientRouter {
       let patientArray = req.body.patients;
       let patientsArray: Array<Patient> = new Array();
       patientArray.forEach(async (patient: any) => {
-        let newPatient: Patient = new Patient();
-        newPatient.setCpf(patient.cpf);
-        newPatient.setName(patient.name);
-        newPatient.setAddress(
-          new AddressConversor().convertAddress(patient.address)
-        );
-        newPatient.setDateOfBirth(
-          new DateConversor().dateConverter(patient.dateOfBirth)
+        const {
+          cpf,
+          name,
+          address,
+          dateOfBirth,
+          plan: { planName, monthlyPayment },
+        } = patient;
+        const newPatient: Patient = new Patient(
+          cpf,
+          new Plan(planName, monthlyPayment),
+          name,
+          new DateConversor().dateConverter(dateOfBirth),
+          new AddressConversor().convertAddress(address)
         );
 
-        let plan: Plan = new Plan();
-        plan.setName(patient.plan.planName);
-        plan.setMonthlyPayment(patient.plan.monthlyPayment);
-        newPatient.setPlan(plan);
         let allPatients = await this.db.getData("/patients");
         let canAdd = true;
         allPatients.forEach((patient: { id: any }) => {
@@ -58,10 +56,14 @@ export class PatientRouter {
             { id: `${newPatient.getCpf()}`, patient: newPatient },
             true
           );
+          res.status(200).json({
+            message: "Patients added",
+          });
+        } else {
+          res.status(400).json({
+            message: "Patients not added",
+          });
         }
-      });
-      res.status(200).json({
-        message: "Patients added",
       });
     } catch (err) {
       res.status(500).json({
@@ -77,39 +79,40 @@ export class PatientRouter {
 
   private async updatePatient(req: Request, res: Response) {
     try {
-      let patient: Patient = new Patient();
-      patient.setCpf(req.body.patient.cpf);
-      patient.setName(req.body.patient.name);
-      patient.setAddress(
-        new AddressConversor().convertAddress(req.body.patient.address)
+      const {
+        cpf,
+        name,
+        address,
+        dateOfBirth,
+        plan: { planName, monthlyPayment },
+      } = req.body.patient;
+      const newPatient: Patient = new Patient(
+        cpf,
+        new Plan(planName, monthlyPayment),
+        name,
+        new DateConversor().dateConverter(dateOfBirth),
+        new AddressConversor().convertAddress(address)
       );
-      patient.setDateOfBirth(
-        new DateConversor().dateConverter(req.body.patient.dateOfBirth)
+      let content = JSON.parse(
+        fs.readFileSync("hospitalDataBase.json", "utf-8")
       );
-
-      let plan: Plan = new Plan();
-      plan.setName(req.body.patient.plan.planName);
-      plan.setMonthlyPayment(req.body.patient.plan.monthlyPayment);
-      patient.setPlan(plan);
-
-      let content = JSON.parse(fs.readFileSync('hospitalDataBase.json', 'utf-8'));
-      content.patients.forEach((oldPatient: any) => {
-        if (oldPatient.id == patient.getCpf()){
-          oldPatient.patient = patient;
+      content.patients.forEach(async (oldPatient: any, key: any) => {
+        if (oldPatient.id == newPatient.getCpf()) {
+          content.patients[key].patient = newPatient;
         }
       });
-      fs.writeFileSync('hospitalDataBase.json', JSON.stringify(content));
+      fs.writeFileSync("hospitalDataBase.json", JSON.stringify(content));
       await this.db.reload();
       res.status(200).json({
-        message: "Patient address updated",
-        patient: patient,
+        message: "Patient updated",
+        patient: newPatient,
       });
-    } catch (err) {
+    } catch (error) {
       res.status(500).json({
         status: 500,
         message: [
           {
-            error: `Error in request ${err}`,
+            error: `Error in request ${error}`,
           },
         ],
       });
@@ -134,7 +137,7 @@ export class PatientRouter {
       res.status(500).json("Error: Patient not found");
     }
   }
-  
+
   private async showPatients(req: Request, res: Response) {
     try {
       let patients = await this.db.getData("/patients");

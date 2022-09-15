@@ -83,9 +83,6 @@ export class PatientRouter {
       patient.setAddress(
         new AddressConversor().convertAddress(req.body.patient.address)
       );
-      patient.setAddress(
-        new AddressConversor().convertAddress(req.body.patient.address)
-      );
       patient.setDateOfBirth(
         new DateConversor().dateConverter(req.body.patient.dateOfBirth)
       );

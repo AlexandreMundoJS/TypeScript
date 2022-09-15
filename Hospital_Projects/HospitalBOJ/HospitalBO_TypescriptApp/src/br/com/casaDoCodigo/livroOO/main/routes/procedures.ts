@@ -2,6 +2,7 @@ import { Procedure } from "../../entities/Procedure";
 import { Request, Response, Router } from "express";
 import { JsonDB, Config } from "node-json-db";
 import { DateConversor } from "../../utils/DateConversor";
+import fs from "fs";
 
 export class ProcedureRouter {
   public router: Router;
@@ -34,7 +35,7 @@ export class ProcedureRouter {
       procedure.setRoom(req.body.procedure.room);
       procedure.setValue(req.body.procedure.value);
       procedure.setDurationTime(req.body.procedure.durationTime);
-
+      
       allProcedures.forEach((procedureElement: { code: any }) => {
         if (procedureElement.code == procedure.getCode()) {
           canAdd = false;
@@ -57,8 +58,43 @@ export class ProcedureRouter {
       });
     }
   }
+  
+  private async updateProcedure(req: Request, res: Response) {
+    try {
+      let procedure: Procedure = new Procedure();
+      procedure.setCode(req.body.procedure.code);
+      procedure.setPatient(req.body.procedure.patient);
+      procedure.setDoctors(req.body.procedure.doctors);
+      procedure.setDate(
+        new DateConversor().dateConverter(req.body.procedure.date)
+      );
+      procedure.setRoom(req.body.procedure.room);
+      procedure.setValue(req.body.procedure.value);
+      procedure.setDurationTime(req.body.procedure.durationTime);
 
-  private async updateProcedure(req: Request, res: Response) {}
+      let content = JSON.parse(fs.readFileSync('hospitalDataBase.json', 'utf-8'));
+      content.procedures.forEach(async (oldProcedure: any) => {
+        if (oldProcedure.code == procedure.getCode()){
+          content.procedures[oldProcedure.code - 1] = procedure;
+        }
+      });
+      fs.writeFileSync('hospitalDataBase.json', JSON.stringify(content));
+      await this.db.reload();
+      res.status(200).json({
+        message: "Procedure updated",
+        procedure: procedure,
+      });
+    } catch (err) {
+      res.status(500).json({
+        status: 500,
+        message: [
+          {
+            error: `Error in request ${err}`,
+          },
+        ],
+      });
+    }
+  }
 
   private async showProcedure(req: Request, res: Response) {
     let query: any = req.query.code;

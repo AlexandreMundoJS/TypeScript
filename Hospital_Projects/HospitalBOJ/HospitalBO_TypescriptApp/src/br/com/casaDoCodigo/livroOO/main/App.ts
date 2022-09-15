@@ -2,6 +2,8 @@
 
 import express, { Application, NextFunction, Request, Response } from "express";
 import PatientRouter from "./routes/patient";
+import DoctorRouter from "./routes/doctor";
+import ProcedureRouter from "./routes/procedures";
 export default class App {
   public express: Application;
 
@@ -30,5 +32,7 @@ export default class App {
 
   private routes(): void{
     this.express.use('/v1/adminHospital/patients/', PatientRouter);
+    this.express.use('/v1/adminHospital/doctors/', DoctorRouter);
+    this.express.use('/v1/adminHospital/procedures/', ProcedureRouter);
   }
 }

@@ -4,6 +4,7 @@ import express, { Application, NextFunction, Request, Response } from "express";
 import PatientRouter from "./routes/patient";
 import DoctorRouter from "./routes/doctor";
 import ProcedureRouter from "./routes/procedures";
+import AppointmentRouter from "./routes/appointments";
 export default class App {
   public express: Application;
 

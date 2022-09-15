@@ -96,7 +96,6 @@ export class PatientRouter {
       patient.setPlan(plan);
 
       let content = JSON.parse(fs.readFileSync('hospitalDataBase.json', 'utf-8'));
-      console.log(content);
       content.patients.forEach((oldPatient: any) => {
         if (oldPatient.id == patient.getCpf()){
           oldPatient.patient = patient;
@@ -138,6 +137,7 @@ export class PatientRouter {
       res.status(500).json("Error: Patient not found");
     }
   }
+  
   private async showPatients(req: Request, res: Response) {
     try {
       let patients = await this.db.getData("/patients");

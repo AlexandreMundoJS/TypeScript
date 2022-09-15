@@ -5,6 +5,9 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 const express_1 = __importDefault(require("express"));
 const patient_1 = __importDefault(require("./routes/patient"));
+const doctor_1 = __importDefault(require("./routes/doctor"));
+const procedures_1 = __importDefault(require("./routes/procedures"));
+const appointments_1 = __importDefault(require("./routes/appointments"));
 class App {
     constructor() {
         this.express = (0, express_1.default)();
@@ -22,7 +25,10 @@ class App {
         this.express.use(express_1.default.urlencoded({ extended: true }));
     }
     routes() {
-        this.express.use('/v1/adminHospital', patient_1.default);
+        this.express.use('/v1/adminHospital/patients/', patient_1.default);
+        this.express.use('/v1/adminHospital/doctors/', doctor_1.default);
+        this.express.use('/v1/adminHospital/procedures/', procedures_1.default);
+        this.express.use('/v1/adminHospital/appointments/', appointments_1.default);
     }
 }
 exports.default = App;

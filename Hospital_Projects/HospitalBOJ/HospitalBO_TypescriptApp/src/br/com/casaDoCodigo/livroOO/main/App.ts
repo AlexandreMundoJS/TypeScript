@@ -35,5 +35,6 @@ export default class App {
     this.express.use('/v1/adminHospital/patients/', PatientRouter);
     this.express.use('/v1/adminHospital/doctors/', DoctorRouter);
     this.express.use('/v1/adminHospital/procedures/', ProcedureRouter);
+    this.express.use('/v1/adminHospital/appointments/', AppointmentRouter);
   }
 }

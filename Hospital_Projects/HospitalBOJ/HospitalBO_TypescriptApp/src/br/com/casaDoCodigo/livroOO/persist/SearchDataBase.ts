@@ -1,5 +1,4 @@
 import { Appointment } from "../entities/Appointment";
-
 export class SearchDataBase {
   private appointments!: Array<Appointment>;
 

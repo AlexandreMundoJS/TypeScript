@@ -4,6 +4,11 @@ export class Person {
   private dateOfBitrh!: Date;
   private address!: Address;
 
+  public constructor(name: string, dateOfBirth: Date, address: Address){
+    this.name = name;
+    this.dateOfBitrh = dateOfBirth;
+    this.address = address
+  }
   public Person() {}
 
   public getName() {

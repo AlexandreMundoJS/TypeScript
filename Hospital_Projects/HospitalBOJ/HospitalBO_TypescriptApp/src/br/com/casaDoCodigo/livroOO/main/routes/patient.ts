@@ -5,6 +5,7 @@ import { AddressConversor } from "../../utils/AddressConversor";
 import { DateConversor } from "../../utils/DateConversor";
 import { JsonDB, Config } from "node-json-db";
 import fs from "fs";
+import { PatientBusiness } from "../../business/PatientBusiness";
 export class PatientRouter {
   public router: Router;
   private db: any;
@@ -140,14 +141,13 @@ export class PatientRouter {
 
   private async showPatients(req: Request, res: Response) {
     try {
-      let patients = await this.db.getData("/patients");
-      res.status(200).json({ patients: patients });
-    } catch (err) {
-      res.status(500).json({
+      res.status(200).json(await new PatientBusiness().showAll());
+    } catch (error) {
+      res.status(200).json({
         status: 500,
         message: [
           {
-            error: `Error in request ${err}`,
+            error: `Error in request ${error}`,
           },
         ],
       });

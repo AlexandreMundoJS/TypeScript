@@ -1,3 +1,4 @@
+import { Address } from "./Address";
 import { Person } from "./Person";
 import { Specialties } from "./Specialties";
 
@@ -6,7 +7,12 @@ export class Doctor extends Person {
   private specialties!: Array<Specialties>;
   private hourValue!: number;
 
-  public Doctor() {}
+  public constructor(crm: number, specialties: Array<Specialties>, hourValue: number, name: string, dateOfBirth: Date, address: Address) {
+    super(name, dateOfBirth, address);
+    this.crm = crm;
+    this.specialties = specialties; 
+    this.hourValue = hourValue;
+  }
 
   public getCrm(): number {
     return this.crm;

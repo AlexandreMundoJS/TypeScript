@@ -11,7 +11,24 @@ const patient: Array<any> = [
   "name",
   "address",
   "dateOfBirth",
-  {"plan" : ["planName", "monthlyPayment"]},
+  { plan: ["planName", "monthlyPayment"] },
 ];
 
-export { doctor, patient };
+const procedure: Array<any> = [
+  "code",
+  "patient",
+  "doctors",
+  "date",
+  "room",
+  "value",
+  "durationTime",
+];
+
+const appointment: Array<any> = [
+  "code",
+  "patient",
+  "doctor",
+  "date"
+]
+
+export { doctor, patient, procedure, appointment };

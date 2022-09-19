@@ -66,7 +66,7 @@ export class DoctorBusiness {
     let showDoctor = false;
     let doctorData;
     doctorsArray.forEach(async (doctor: { id: any }) => {
-      if (doctor.id === query) {
+      if (doctor.id == query) {
         showDoctor = true;
         doctorData = doctor;
       }
@@ -86,7 +86,7 @@ export class DoctorBusiness {
 
   async update(doctor: any, id: any) {
     let content = JSON.parse(fs.readFileSync("hospitalDataBase.json", "utf-8"));
-    content.doctors.forEach(async (oldDoctor: any, key: any) => {
+    content.doctors.forEach(async (oldDoctor: any) => {
       if (oldDoctor.id == id) {
         for(let docProp in doctor){
           if (Object.keys(oldDoctor.doctor).includes(docProp)){

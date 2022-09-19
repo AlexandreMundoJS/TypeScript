@@ -1,13 +1,10 @@
 import { Request, Response, Router } from "express";
-import { JsonDB, Config } from "node-json-db";
 import { DoctorBusiness } from "../../business/DoctorBusiness";
 export class DoctorRouter {
   public router: Router;
-  private db: any;
 
   public constructor() {
     this.router = Router();
-    this.db = new JsonDB(new Config("hospitalDataBase", true, false, "/"));
   }
 
   private testRoute(req: Request, res: Response) {

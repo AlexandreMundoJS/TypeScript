@@ -1,4 +1,4 @@
-import { doctor, patient } from "../constants/constants";
+import { appointment, doctor, patient, procedure } from "../constants/constants";
 
 export class Serialize {
   serializeDoctor(docParam: any): any {
@@ -35,6 +35,26 @@ export class Serialize {
             }
           });
         }
+      }
+    });
+    return missingParams;
+  }
+
+  serializeProcedure(procedureParam: any){
+    let missingParams: Array<string> = [];
+    procedure.forEach((procedureKey: any) => {
+      if (Object.keys(procedureParam).indexOf(procedureKey) < 0) {
+        missingParams.push(procedureKey);
+      }
+    });
+    return missingParams;
+  }
+
+  serializeAppointment(appointmentParam: any){
+    let missingParams: Array<string> = [];
+    appointment.forEach((appointmentKey: any) => {
+      if (Object.keys(appointmentParam).indexOf(appointmentKey) < 0) {
+        missingParams.push(appointmentKey);
       }
     });
     return missingParams;

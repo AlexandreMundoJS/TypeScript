@@ -11,7 +11,23 @@ export class Procedure {
   private value!: number;
   private durationTime!: number;
 
-  public Procedure() {}
+  public constructor(
+    code: number,
+    patient: Patient,
+    doctors: Array<Doctor>,
+    date: Date,
+    room: Room,
+    value: number,
+    durationTime: number
+  ) {
+    this.code = code;
+    this.patient = patient;
+    this.doctors = doctors;
+    this.date = date;
+    this.room = room;
+    this.value = value;
+    this.durationTime = durationTime;
+  }
 
   public getCode(): number {
     return this.code;
@@ -65,7 +81,7 @@ export class Procedure {
     return this.durationTime;
   }
 
-  public setDurationTime(durationTime: number): void{
+  public setDurationTime(durationTime: number): void {
     this.durationTime = durationTime;
   }
 }

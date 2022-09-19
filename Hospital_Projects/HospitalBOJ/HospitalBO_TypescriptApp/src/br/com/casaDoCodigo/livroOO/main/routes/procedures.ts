@@ -3,6 +3,8 @@ import { Request, Response, Router } from "express";
 import { JsonDB, Config } from "node-json-db";
 import { DateConversor } from "../../utils/DateConversor";
 import fs from "fs";
+import { ProcedureBusiness } from "../../business/ProcedureBusiness";
+import { PatientBusiness } from "../../business/PatientBusiness";
 
 export class ProcedureRouter {
   public router: Router;
@@ -23,30 +25,7 @@ export class ProcedureRouter {
 
   public async createProcedure(req: Request, res: Response): Promise<void> {
     try {
-      let procedure: Procedure = new Procedure();
-      let allProcedures = await this.db.getData("/procedures");
-      let canAdd = true;
-      procedure.setCode(allProcedures.length + 1);
-      procedure.setPatient(req.body.procedure.patient);
-      procedure.setDoctors(req.body.procedure.doctors);
-      procedure.setDate(
-        new DateConversor().dateConverter(req.body.procedure.date)
-      );
-      procedure.setRoom(req.body.procedure.room);
-      procedure.setValue(req.body.procedure.value);
-      procedure.setDurationTime(req.body.procedure.durationTime);
-      
-      allProcedures.forEach((procedureElement: { code: any }) => {
-        if (procedureElement.code == procedure.getCode()) {
-          canAdd = false;
-        }
-      });
-      if (canAdd) {
-        await this.db.push("/procedures[]", procedure, true);
-        res.status(200).json({
-          message: "Procedure added",
-        });
-      }
+      new ProcedureBusiness().add(req.body.procedure, req, res);
     } catch (err) {
       res.status(500).json({
         status: 500,
@@ -58,31 +37,12 @@ export class ProcedureRouter {
       });
     }
   }
-  
+
   private async updateProcedure(req: Request, res: Response) {
     try {
-      let procedure: Procedure = new Procedure();
-      procedure.setCode(req.body.procedure.code);
-      procedure.setPatient(req.body.procedure.patient);
-      procedure.setDoctors(req.body.procedure.doctors);
-      procedure.setDate(
-        new DateConversor().dateConverter(req.body.procedure.date)
-      );
-      procedure.setRoom(req.body.procedure.room);
-      procedure.setValue(req.body.procedure.value);
-      procedure.setDurationTime(req.body.procedure.durationTime);
-
-      let content = JSON.parse(fs.readFileSync('hospitalDataBase.json', 'utf-8'));
-      content.procedures.forEach(async (oldProcedure: any) => {
-        if (oldProcedure.code == procedure.getCode()){
-          content.procedures[oldProcedure.code - 1] = procedure;
-        }
-      });
-      fs.writeFileSync('hospitalDataBase.json', JSON.stringify(content));
-      await this.db.reload();
+      new ProcedureBusiness().update(req.body, req.params.id);
       res.status(200).json({
         message: "Procedure updated",
-        procedure: procedure,
       });
     } catch (err) {
       res.status(500).json({
@@ -97,38 +57,33 @@ export class ProcedureRouter {
   }
 
   private async showProcedure(req: Request, res: Response) {
-    let query: any = req.query.code;
-    let showProcedure = false;
-    let procedureData;
-    const proceduresArray = await this.db.getData("/procedures");
-    proceduresArray.forEach(async (procedure: { code: any }) => {
-      if (procedure.code == query) {
-        showProcedure = true;
-        procedureData = procedure;
-      }
-    });
-
-    if (showProcedure) {
-      res.status(200).json(procedureData);
-    } else {
-      res.status(500).json("Error: Procedure not found");
+    try {
+      res.status(200).json(await new ProcedureBusiness().show(req.params.id));
+    } catch (error) {
+      res.status(500).json({
+        status: 500,
+        message: [
+          {
+            error: `Error in request ${error}`,
+          },
+        ],
+      });
     }
   }
 
   private async showProcedures(req: Request, res: Response) {
     try {
-        let procedures = await this.db.getData("/procedures");
-        res.status(200).json({ procedures: procedures });
-      } catch (err) {
-        res.status(500).json({
-          status: 500,
-          message: [
-            {
-              error: `Error in request ${err}`,
-            },
-          ],
-        });
-      }
+      res.status(200).json(await new ProcedureBusiness().showAll());
+    } catch (err) {
+      res.status(500).json({
+        status: 500,
+        message: [
+          {
+            error: `Error in request ${err}`,
+          },
+        ],
+      });
+    }
   }
 
   private bindThis(): void {
@@ -142,10 +97,10 @@ export class ProcedureRouter {
   public init(): void {
     this.bindThis();
     this.router.get("/testProcedureRouter", this.testRoute);
-    this.router.get("/getProcedure", this.showProcedure);
+    this.router.get("/getProcedure/:id", this.showProcedure);
     this.router.get("/getProcedures", this.showProcedures);
     this.router.post("/createProcedure", this.createProcedure);
-    this.router.put("/updateProcedure", this.updateProcedure);
+    this.router.put("/updateProcedure/:id", this.updateProcedure);
   }
 }
 

@@ -71,7 +71,7 @@ export class PatientBusiness {
     let showData = false;
     let patientData;
     patientsArray.forEach(async (patient: { id: any }) => {
-      if (patient.id === query) {
+      if (patient.id == query) {
         showData = true;
         patientData = patient;
       }
@@ -87,26 +87,25 @@ export class PatientBusiness {
     }
   }
 
-  async update(patient: any) {
-    const {
-      cpf,
-      name,
-      address,
-      dateOfBirth,
-      plan: { planName, monthlyPayment },
-    } = patient;
-    const newPatient: Patient = new Patient(
-      cpf,
-      new Plan(planName, monthlyPayment),
-      name,
-      new DateConversor().dateConverter(dateOfBirth),
-      new AddressConversor().convertAddress(address)
-    );
-
+  async update(patient: any, id: any) {
     let content = JSON.parse(fs.readFileSync("hospitalDataBase.json", "utf-8"));
-    content.patients.forEach(async (oldPatient: any, key: any) => {
-      if (oldPatient.id == newPatient.getCpf()) {
-        content.patients[key].patient = newPatient;
+    content.patients.forEach(async (oldPatient: any) => {
+      if (oldPatient.id == id) {
+        for (let patientProp in patient) {
+          if (Object.keys(oldPatient.patient).includes(patientProp)) {
+            if (patientProp == "address") {
+              oldPatient.patient[patientProp] =
+                new AddressConversor().convertAddress(patient[patientProp]);
+            } else if (patientProp == "plan") {
+              oldPatient.patient[patientProp] = new Plan(
+                patient[patientProp][0],
+                patient[patientProp][1]
+              );
+            } else {
+              oldPatient.patient[patientProp] = patient[patientProp];
+            }
+          }
+        }
       }
     });
     fs.writeFileSync("hospitalDataBase.json", JSON.stringify(content));

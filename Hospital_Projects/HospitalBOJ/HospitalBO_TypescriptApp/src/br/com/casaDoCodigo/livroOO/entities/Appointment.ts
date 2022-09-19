@@ -7,7 +7,12 @@ export class Appointment {
   private doctor!: Doctor;
   private date!: Date;
 
-  public Appointment() {}
+  public constructor(code: number, patient: Patient, doctor: Doctor, date: Date){
+    this.code = code;
+    this.patient = patient;
+    this.doctor = doctor;
+    this.date = date;
+  }
 
   public getCode(): number {
     return this.code;

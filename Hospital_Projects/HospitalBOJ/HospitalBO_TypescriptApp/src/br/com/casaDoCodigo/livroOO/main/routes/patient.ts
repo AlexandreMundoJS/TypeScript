@@ -22,7 +22,7 @@ export class PatientRouter {
 
   private async updatePatient(req: Request, res: Response) {
     try {
-      new PatientBusiness().update(req.body.patient);
+      new PatientBusiness().update(req.body, req.params.id);
       res.status(200).json("Patient Updated");
     } catch (error) {
       res.status(500).json({
@@ -38,7 +38,7 @@ export class PatientRouter {
 
   private async showPatient(req: Request, res: Response) {
     try {
-      res.status(200).json(await new PatientBusiness().show(req.query.id));
+      res.status(200).json(await new PatientBusiness().show(req.params.id));
     } catch (error) {
       res.status(500).json({
         status: 500,
@@ -77,10 +77,10 @@ export class PatientRouter {
   public init(): void {
     this.bindThis();
     this.router.get("/testPatientRouter", this.testRoute);
-    this.router.get("/getPatient", this.showPatient);
+    this.router.get("/getPatient/:id", this.showPatient);
     this.router.get("/getPatients", this.showPatients);
     this.router.post("/createPatient", this.createPatient);
-    this.router.put("/updatePatient", this.updatePatient);
+    this.router.put("/updatePatient/:id", this.updatePatient);
   }
 }
 

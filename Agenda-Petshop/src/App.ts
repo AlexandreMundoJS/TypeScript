@@ -11,6 +11,7 @@ export default new (class App {
   }
 
   routes(): void {
+    console.log("OLA MUNDO")
     this.express.use("/testRoute", (req, res) => {
       res.status(200).send("MS FUNCIONAL");
     });
